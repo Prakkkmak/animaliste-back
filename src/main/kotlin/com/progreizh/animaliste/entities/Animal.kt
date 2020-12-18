@@ -43,9 +43,13 @@ data class Animal(
          */
         val male: Boolean,
         /**
-         * Espece / race / suspicions
+         * Espece
          */
         val specie: String,
+        /**
+         * Race
+         */
+        val race: String,
         //endregion
 
         //region psychologique

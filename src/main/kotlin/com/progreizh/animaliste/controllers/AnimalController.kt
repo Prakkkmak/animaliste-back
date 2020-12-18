@@ -3,11 +3,9 @@ package com.progreizh.animaliste.controllers
 import com.progreizh.animaliste.entities.Animal
 import com.progreizh.animaliste.repositories.AnimalRepository
 import org.bson.types.ObjectId
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/animals")
@@ -28,5 +26,11 @@ class AnimalController(private val repository: AnimalRepository) {
     fun getOneAnimals(@PathVariable("id") id: String): ResponseEntity<Animal> {
         val animal = repository.findOneById(ObjectId(id))
         return ResponseEntity.ok(animal)
+    }
+
+    @PostMapping
+    fun createAnimal(@RequestBody animal: Animal) : ResponseEntity<Animal> {
+        val animal = repository.save(animal)
+        return ResponseEntity(animal, HttpStatus.CREATED)
     }
 }

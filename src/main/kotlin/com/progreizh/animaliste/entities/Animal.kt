@@ -13,21 +13,21 @@ data class Animal(
          */
         @Id
         @Generated
-        val id: String,
+        val id: String = ObjectId.get().toHexString(),
 
         //region administratif
         /**
          * Numero de puce
          */
-        val chip: String,
+        val chip: String?,
         /**
          * Numero de tatouage
          */
-        val tatoo: String,
+        val tatoo: String?,
         /**
          * Numero de dossier de son ancien systeme
          */
-        val fileNumber: String,
+        val fileNumber: String?,
         /**
          * Date d'entrée dans le systeme
          */
@@ -38,7 +38,7 @@ data class Animal(
         /**
          * Déscription physique
          */
-        val physicalDescription: String,
+        val physicalDescription: String?,
         /**
          * Animal est-il un mâle ?
          */
@@ -50,33 +50,33 @@ data class Animal(
         /**
          * Race
          */
-        val race: String,
+        val race: String?,
         //endregion
 
         //region psychologique
         /**
          * Déscription comportementale de l'animal
          */
-        val attitudeDescription: String,
+        val attitudeDescription: String?,
         /**
          * Ce qu'il aime.
          */
-        val likes : String,
+        val likes : String?,
         /**
          * Ce qu'il n'aime pas
          */
-        val dislikes: String,
+        val dislikes: String?,
         //endregion
 
         //region medical
         /**
          * Vaccins
          */
-        val vaccine: String,
+        val vaccine: String?,
         /**
          * Infos pour une alimentation spéciale
          */
-        val nutrition: String,
+        val nutrition: String?,
         //endregion
 
         //region infos
@@ -87,11 +87,11 @@ data class Animal(
         /**
          * Description
          */
-        val description: String,
+        val description: String?,
         /**
          * Origine
          */
-        val origin: String,
+        val origin: String?,
         //endregion
 
         //TODO Historique de l'animal

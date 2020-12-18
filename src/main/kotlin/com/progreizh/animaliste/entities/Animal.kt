@@ -88,6 +88,6 @@ data class Animal(
          */
         val origin: String,
         //endregion
-        
+
         //TODO Historique de l'animal
 )

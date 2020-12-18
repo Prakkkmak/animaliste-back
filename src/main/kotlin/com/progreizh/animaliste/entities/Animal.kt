@@ -4,15 +4,16 @@ import org.bson.types.ObjectId
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 import java.util.*
+import javax.annotation.Generated
 
 @Document
 data class Animal(
-
         /**
          * Id MongoDB de l'animal
          */
         @Id
-        val id: ObjectId = ObjectId.get(),
+        @Generated
+        val id: String,
 
         //region administratif
         /**

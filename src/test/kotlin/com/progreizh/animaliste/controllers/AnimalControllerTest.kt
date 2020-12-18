@@ -4,6 +4,7 @@ import com.progreizh.animaliste.entities.Animal
 import com.progreizh.animaliste.repositories.AnimalRepository
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -22,9 +23,11 @@ class AnimalControllerTest @Autowired constructor(
         private val animalRepository: AnimalRepository,
         private val restTemplate: TestRestTemplate
 ){
-    private val defaultAnimalId = ObjectId.get()
+
     @LocalServerPort
     protected var port: Int = 0
+
+    private val defaultAnimalId: String = ObjectId.get().toHexString()
 
     @BeforeEach
     fun setUp() {
@@ -58,9 +61,8 @@ class AnimalControllerTest @Autowired constructor(
 
 
     @Test
-    fun `should return all patients`() {
+    fun `should return all animals`() {
         saveOneAnimal()
-
         val response = restTemplate.getForEntity(
                 getRootUrl(),
                 List::class.java
@@ -72,7 +74,7 @@ class AnimalControllerTest @Autowired constructor(
     }
 
     @Test
-    fun `should return single patient by id`() {
+    fun `should return single animal by id`() {
         saveOneAnimal()
 
         val response = restTemplate.getForEntity(

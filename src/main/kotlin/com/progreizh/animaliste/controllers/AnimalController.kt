@@ -43,9 +43,9 @@ class AnimalController(private val repository: AnimalRepository) {
      * Modifie l'animal dans la base de données mongo en fonction de son identifiant
      */
     @PutMapping("/{id}")
-    fun putAnimal(@PathVariable("id") id: String, @RequestBody newAnimal: Animal): ResponseEntity<Animal> {
-        val animal = repository.save(newAnimal)
-        return ResponseEntity(animal, HttpStatus.CREATED)
+    fun putAnimal(@PathVariable("id") id: String, @RequestBody animal: Animal): ResponseEntity<Animal> {
+        val newAnimal = repository.save(animal)
+        return ResponseEntity(newAnimal, HttpStatus.CREATED)
     }
 
     /**

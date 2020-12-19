@@ -16,16 +16,15 @@ import org.springframework.boot.test.web.client.postForEntity
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import java.net.URI
 import java.util.*
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(SpringExtension::class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class AnimalControllerTest @Autowired constructor(
-        private val animalRepository: AnimalRepository,
-        private val restTemplate: TestRestTemplate
-){
+    private val animalRepository: AnimalRepository,
+    private val restTemplate: TestRestTemplate
+) {
 
     @LocalServerPort
     protected var port: Int = 0
@@ -67,8 +66,8 @@ class AnimalControllerTest @Autowired constructor(
     fun `should return all animals`() {
         saveOneAnimal()
         val response = restTemplate.getForEntity(
-                getRootUrl(),
-                List::class.java
+            getRootUrl(),
+            List::class.java
         )
 
         assertEquals(200, response.statusCode.value())
@@ -80,21 +79,21 @@ class AnimalControllerTest @Autowired constructor(
     fun `should return single animal by id`() {
         saveOneAnimal()
 
-        var response = restTemplate.getForEntity(
-                getRootUrl() + "/$defaultAnimalId",
-                Animal::class.java
+        val response = restTemplate.getForEntity(
+            getRootUrl() + "/$defaultAnimalId",
+            Animal::class.java
         )
 
         assertEquals(200, response.statusCode.value())
         assertNotNull(response.body)
         assertEquals(defaultAnimalId, response.body?.id)
 
-        response = restTemplate.getForEntity(
-            getRootUrl() + "123",
-            Animal::class.java
+        val responseIncorrectId = restTemplate.getForEntity(
+            getRootUrl() + "test",
+            Any::class.java
         )
 
-        assertEquals(HttpStatus.NOT_FOUND, response.statusCode)
+        assertEquals(HttpStatus.NOT_FOUND, responseIncorrectId.statusCode)
     }
 
     @Test
@@ -111,26 +110,26 @@ class AnimalControllerTest @Autowired constructor(
         saveOneAnimal()
 
         val newAnimal = Animal(
-                defaultAnimalId,
-                "123456789012345",
-                "123ABC",
-                "0000001",
-                Date(),
-                "Description physique",
-                true,
-                "Chien",
-                "roux",
-                "Description attitude",
-                "Chiens",
-                "Enfants",
-                "Non",
-                "Oeufs",
-                "Mimic",
-                "Mimic est un chien",
-                "Imaginaire"
+            defaultAnimalId,
+            "123456789012345",
+            "123ABC",
+            "0000001",
+            Date(),
+            "Description physique",
+            true,
+            "Chien",
+            "roux",
+            "Description attitude",
+            "Chiens",
+            "Enfants",
+            "Non",
+            "Oeufs",
+            "Mimic",
+            "Mimic est un chien",
+            "Imaginaire"
         )
 
-        restTemplate.put(getRootUrl()+"/$defaultAnimalId", newAnimal, defaultAnimalId)
+        restTemplate.put(getRootUrl() + "/$defaultAnimalId", newAnimal, defaultAnimalId)
 
         val response = restTemplate.getForEntity(
             getRootUrl() + "/$defaultAnimalId",
@@ -139,21 +138,28 @@ class AnimalControllerTest @Autowired constructor(
 
         assertEquals(HttpStatus.OK, response.statusCode)
         assertNotNull(response.body)
-        assertEquals(response.body!!.specie,"Chien")
+        assertEquals(response.body!!.specie, "Chien")
         assertEquals(response.body!!.description, "Mimic est un chien")
         assertEquals(response.body!!.race, "roux")
     }
 
     @Test
-    fun `should return animal list without animal` (){
+    fun `should return a not found error after get request on deleted animal`() {
         saveOneAnimal()
-        restTemplate.delete(getRootUrl()+"", defaultAnimalId)
+        restTemplate.delete(getRootUrl() + "/$defaultAnimalId", defaultAnimalId)
 
-        val response = restTemplate.getForEntity(
+        val responseAfterDelete = restTemplate.getForEntity(
             getRootUrl() + "/$defaultAnimalId",
             Animal::class.java
         )
 
-        assertEquals(200, response.statusCode.value())
+        assertEquals(HttpStatus.NOT_FOUND, responseAfterDelete.statusCode)
+
+        val responseIncorrectId = restTemplate.getForEntity(
+            getRootUrl() + "123",
+            Any::class.java
+        )
+
+        assertEquals(HttpStatus.NOT_FOUND, responseIncorrectId.statusCode)
     }
 }

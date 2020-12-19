@@ -16,6 +16,7 @@ import org.springframework.boot.test.web.client.postForEntity
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import java.net.URI
 import java.util.*
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -79,7 +80,7 @@ class AnimalControllerTest @Autowired constructor(
     fun `should return single animal by id`() {
         saveOneAnimal()
 
-        val response = restTemplate.getForEntity(
+        var response = restTemplate.getForEntity(
                 getRootUrl() + "/$defaultAnimalId",
                 Animal::class.java
         )
@@ -87,6 +88,13 @@ class AnimalControllerTest @Autowired constructor(
         assertEquals(200, response.statusCode.value())
         assertNotNull(response.body)
         assertEquals(defaultAnimalId, response.body?.id)
+
+        response = restTemplate.getForEntity(
+            getRootUrl() + "123",
+            Animal::class.java
+        )
+
+        assertEquals(HttpStatus.NOT_FOUND, response.statusCode)
     }
 
     @Test
@@ -96,6 +104,44 @@ class AnimalControllerTest @Autowired constructor(
         assertEquals(HttpStatus.CREATED, response.statusCode)
         assertNotNull(response.body)
         assertEquals(defaultAnimalId, response.body?.id)
+    }
+
+    @Test
+    fun `should return single animal with new information`() {
+        saveOneAnimal()
+
+        val newAnimal = Animal(
+                defaultAnimalId,
+                "123456789012345",
+                "123ABC",
+                "0000001",
+                Date(),
+                "Description physique",
+                true,
+                "Chien",
+                "roux",
+                "Description attitude",
+                "Chiens",
+                "Enfants",
+                "Non",
+                "Oeufs",
+                "Mimic",
+                "Mimic est un chien",
+                "Imaginaire"
+        )
+
+        restTemplate.put(getRootUrl()+"/$defaultAnimalId", newAnimal, defaultAnimalId)
+
+        val response = restTemplate.getForEntity(
+            getRootUrl() + "/$defaultAnimalId",
+            Animal::class.java
+        )
+
+        assertEquals(HttpStatus.OK, response.statusCode)
+        assertNotNull(response.body)
+        assertEquals(response.body!!.specie,"Chien")
+        assertEquals(response.body!!.description, "Mimic est un chien")
+        assertEquals(response.body!!.race, "roux")
     }
 
     @Test

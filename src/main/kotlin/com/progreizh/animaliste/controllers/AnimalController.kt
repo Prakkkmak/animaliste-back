@@ -30,18 +30,27 @@ class AnimalController(private val repository: AnimalRepository) {
             ResponseEntity.ok(animalOptional.get())
     }
 
+    /**
+     * Ajoute l'animal dans la base de données mongo
+     */
     @PostMapping
     fun createAnimal(@RequestBody animal: Animal): ResponseEntity<Animal> {
         val newAnimal = repository.insert(animal)
         return ResponseEntity(newAnimal, HttpStatus.CREATED)
     }
 
+    /**
+     * Modifie l'animal dans la base de données mongo en fonction de son identifiant
+     */
     @PutMapping("/{id}")
     fun putAnimal(@PathVariable("id") id: String, @RequestBody newAnimal: Animal): ResponseEntity<Animal> {
         val animal = repository.save(newAnimal)
         return ResponseEntity(animal, HttpStatus.CREATED)
     }
 
+    /**
+     * Supprime l'animal dans la base de données mongo en fonction de son identifiant
+     */
     @DeleteMapping("/{id}")
     fun deleteAnimal(@PathVariable("id") id: String): ResponseEntity<Animal> {
         val animalOptional = repository.findById(id)

@@ -31,7 +31,7 @@ class AnimalController(private val repository: AnimalRepository) {
     }
 
     /**
-     * Ajoute l'animal dans la base de données mongo
+     * Ajoute un animal.
      */
     @PostMapping
     fun createAnimal(@RequestBody animal: Animal): ResponseEntity<Animal> {
@@ -40,7 +40,7 @@ class AnimalController(private val repository: AnimalRepository) {
     }
 
     /**
-     * Modifie l'animal dans la base de données mongo en fonction de son identifiant
+     * Modifie l'animal fonction de son identifiant et des nouvelles données.
      */
     @PutMapping("/{id}")
     fun putAnimal(@PathVariable("id") id: String, @RequestBody animal: Animal): ResponseEntity<Animal> {
@@ -49,7 +49,7 @@ class AnimalController(private val repository: AnimalRepository) {
     }
 
     /**
-     * Supprime l'animal dans la base de données mongo en fonction de son identifiant
+     * Supprime l'animal en fonction de son identifiant.
      */
     @DeleteMapping("/{id}")
     fun deleteAnimal(@PathVariable("id") id: String): ResponseEntity<Animal> {
@@ -57,10 +57,9 @@ class AnimalController(private val repository: AnimalRepository) {
         return if (animalOptional.isEmpty)
             ResponseEntity(HttpStatus.NOT_FOUND)
         else {
-            repository.delete(animalOptional.get())
-            ResponseEntity.ok(animalOptional.get())
+            val animal = animalOptional.get()
+            repository.delete(animal)
+            ResponseEntity.ok(animal)
         }
-
-
     }
 }

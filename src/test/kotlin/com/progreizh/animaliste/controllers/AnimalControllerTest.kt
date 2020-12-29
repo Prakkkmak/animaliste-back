@@ -14,13 +14,12 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.boot.test.web.client.postForEntity
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
-import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import java.util.*
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(SpringExtension::class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@TestPropertySource(properties = ["spring.data.mongodb.database=animaliste_test"])
 class AnimalControllerTest @Autowired constructor(
     private val animalRepository: AnimalRepository,
     private val restTemplate: TestRestTemplate

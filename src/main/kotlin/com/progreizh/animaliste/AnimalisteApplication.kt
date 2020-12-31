@@ -13,7 +13,9 @@ class AnimalisteApplication{
     fun corsConfigurer(): WebMvcConfigurer {
         return object : WebMvcConfigurer {
             override fun addCorsMappings(registry: CorsRegistry) {
-                registry.addMapping("/**").allowedOrigins("http://localhost:8080")
+                registry.addMapping("/**")
+                    .allowedOrigins("http://localhost:8080")
+                    .allowedMethods("GET", "PUT", "UPDATE", "DELETE")
             }
         }
     }

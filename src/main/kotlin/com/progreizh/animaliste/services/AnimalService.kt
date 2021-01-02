@@ -1,7 +1,9 @@
 package com.progreizh.animaliste.services
 
 import com.progreizh.animaliste.repositories.AnimalRepository
+import org.springframework.stereotype.Service
 
+@Service
 class AnimalService(private val animalRepository: AnimalRepository) {
     /**
      * Récupère les éspèces différentes des animaux.

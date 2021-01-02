@@ -64,13 +64,15 @@ class SpecieControllerTest @Autowired constructor(
     }
 
     @Test
-    fun `should return all specues`() {
+    fun `should return all species`() {
         val response = restTemplate.getForEntity(
             getRootUrl(),
             Set::class.java
         )
         assertEquals(HttpStatus.OK, response.statusCode)
         assertNotNull(response.body)
+        assertTrue(response.body!!.contains("Chat"))
+        assertTrue(response.body!!.contains("Chien"))
         assertEquals(2, response.body?.size)
     }
 }

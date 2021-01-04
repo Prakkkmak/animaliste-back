@@ -5,12 +5,13 @@ import com.progreizh.animaliste.repositories.AccountRepository
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.util.Optional
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/accounts")
 class AccountController(private val repository: AccountRepository) {
     /**
-     * Récupère tous les comptes
+     * Récupère tous les comptes.
      */
     @GetMapping
     fun getAllAccounts(): ResponseEntity<List<Account>>{
@@ -22,7 +23,7 @@ class AccountController(private val repository: AccountRepository) {
      * Récupère le compte en fonction de son identifiant.
      */
     @GetMapping("/{id}")
-    fun getOneAccount(@PathVariable("id") id: String): ResponseEntity<Account> {
+    fun getOneAccountById(@PathVariable("id") id: String): ResponseEntity<Account> {
         val accountOptional = repository.findById(id)
         return if (accountOptional.isEmpty)
             ResponseEntity(HttpStatus.NOT_FOUND)
@@ -30,8 +31,21 @@ class AccountController(private val repository: AccountRepository) {
             ResponseEntity.ok(accountOptional.get())
     }
 
+    @GetMapping("/{mail}")
+    fun getOneAccountByMail(@PathVariable("mail") mail: String, @RequestParam password: Optional<String>): ResponseEntity<Account> {
+        val accountOptional = if(password.isEmpty)
+            repository.findAccountByMailEquals(mail)
+        else
+            repository.findAccountByMailEqualsAndPasswordEquals(mail, password.get())
+
+        return if (accountOptional.isEmpty)
+            ResponseEntity(HttpStatus.NOT_FOUND)
+        else
+            ResponseEntity.ok(accountOptional.get())
+    }
+
     /**
-     * Ajoute un compte
+     * Ajoute un compte.
      */
     @PostMapping
     fun createAccount(@RequestBody account: Account): ResponseEntity<Account> {
@@ -40,7 +54,7 @@ class AccountController(private val repository: AccountRepository) {
     }
 
     /**
-     * Modifie le compte en fonction de son identifiant et des nouvelles données
+     * Modifie le compte en fonction de son identifiant et des nouvelles données.
      */
     @PutMapping("/{id}")
     fun updateAccount(@PathVariable("id") id: String, @RequestBody account: Account): ResponseEntity<Account> {
@@ -49,7 +63,7 @@ class AccountController(private val repository: AccountRepository) {
     }
 
     /**
-     * Supprime le compte en fonction de son identifiant
+     * Supprime le compte en fonction de son identifiant.
      */
     @DeleteMapping("/{id}")
     fun deleteAccount(@PathVariable("id") id: String): ResponseEntity<Account> {

@@ -31,6 +31,10 @@ class AccountController(private val repository: AccountRepository) {
             ResponseEntity.ok(accountOptional.get())
     }
 
+    /**
+     * Récupère le compte en fonction de son identifiant et de son mot de passe si celui-ci est en paramètre
+     * de la requête GET (exemple : animaliste.fr/hello@mail.fr?password=123.
+     */
     @GetMapping("/{mail}")
     fun getOneAccountByMail(@PathVariable("mail") mail: String, @RequestParam password: Optional<String>): ResponseEntity<Account> {
         val accountOptional = if(password.isEmpty)

@@ -14,9 +14,9 @@ data class Account(
     val mail: String,
     val password: String,
     val name: String,
-    val surname: String?,
-    val phoneNumber: String?,
-    val legalStatusName: String?,
+    val surname: String? = null,
+    val phoneNumber: String? = null,
+    val legalStatusName: String? = null,
     val registerDate: Date = Date(),
 
     )

@@ -33,10 +33,10 @@ class AccountController(private val repository: AccountRepository) {
     }
 
     /**
-     * Retourne le compte correspondant au couple mail/mot de passe ssi celui-ci existe
+     * Retourne le compte correspondant au couple mail/mot de passe ssi celui-ci existe ou un message d'erreur
      */
     @GetMapping("/login")
-    fun getOneAccountByLoginForm(@RequestBody account: AccountLoginForm): ResponseEntity<Account> {
+    fun getOneAccountByLoginForm(@RequestBody account: AccountLoginForm): ResponseEntity<Any> {
         var accountOptional: Optional<Account> = repository.findAccountByMailEqualsAndPasswordEquals(account.mail, account.password)
         if(accountOptional.isEmpty)
             accountOptional = repository.findAccountByMailEquals(account.mail)
@@ -44,9 +44,9 @@ class AccountController(private val repository: AccountRepository) {
             return ResponseEntity.ok(accountOptional.get())
 
         return if (accountOptional.isEmpty)
-            ResponseEntity(HttpStatus.NOT_FOUND)
+            ResponseEntity("Mot de passe incorrect", HttpStatus.NOT_FOUND)
         else
-            ResponseEntity.ok(accountOptional.get())
+            ResponseEntity("E-mail et mot de passe incorrects", HttpStatus.NOT_FOUND)
     }
 
     /**

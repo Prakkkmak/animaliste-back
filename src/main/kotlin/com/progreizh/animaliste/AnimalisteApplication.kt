@@ -15,7 +15,7 @@ class AnimalisteApplication{
             override fun addCorsMappings(registry: CorsRegistry) {
                 registry.addMapping("/**")
                     .allowedOrigins("http://localhost:8080")
-                    .allowedMethods("GET", "PUT", "UPDATE", "DELETE", "POST")
+                    .allowedMethods("GET", "PUT", "DELETE", "POST")
             }
         }
     }
@@ -24,7 +24,6 @@ class AnimalisteApplication{
 fun main(args: Array<String>) {
     runApplication<AnimalisteApplication>(*args)
 }
-
 
 
 

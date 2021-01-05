@@ -1,6 +1,7 @@
 package com.progreizh.animaliste.controllers
 
 import com.progreizh.animaliste.entities.Account
+import com.progreizh.animaliste.entities.AccountLoginForm
 import com.progreizh.animaliste.repositories.AccountRepository
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -32,15 +33,15 @@ class AccountController(private val repository: AccountRepository) {
     }
 
     /**
-     * Récupère le compte en fonction de son identifiant et de son mot de passe si celui-ci est en paramètre
-     * de la requête GET (exemple : animaliste.fr/hello@mail.fr?password=123.
+     * Retourne le compte correspondant au couple mail/mot de passe ssi celui-ci existe
      */
-    @GetMapping("/{mail}")
-    fun getOneAccountByMail(@PathVariable("mail") mail: String, @RequestParam password: Optional<String>): ResponseEntity<Account> {
-        val accountOptional = if(password.isEmpty)
-            repository.findAccountByMailEquals(mail)
+    @GetMapping("/login")
+    fun getOneAccountByLoginForm(@RequestBody account: AccountLoginForm): ResponseEntity<Account> {
+        var accountOptional: Optional<Account> = repository.findAccountByMailEqualsAndPasswordEquals(account.mail, account.password)
+        if(accountOptional.isEmpty)
+            accountOptional = repository.findAccountByMailEquals(account.mail)
         else
-            repository.findAccountByMailEqualsAndPasswordEquals(mail, password.get())
+            return ResponseEntity.ok(accountOptional.get())
 
         return if (accountOptional.isEmpty)
             ResponseEntity(HttpStatus.NOT_FOUND)

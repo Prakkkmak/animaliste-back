@@ -36,7 +36,7 @@ class AccountController(private val repository: AccountRepository) {
      */
     @GetMapping("/login")
     fun getAccountByMailAndPassword(@RequestParam mail: String, @RequestParam password: String): ResponseEntity<Account> {
-        val accountOptional: Optional<Account> = repository.findAccountByMailEqualsAndPasswordEquals(mail, password)
+        val accountOptional: Optional<Account> = repository.findAccountByMailEqualsAndPassword(mail, password)
         return if(accountOptional.isEmpty)
             ResponseEntity(HttpStatus.UNAUTHORIZED)
         else

@@ -5,6 +5,6 @@ import org.springframework.data.mongodb.repository.MongoRepository
 import java.util.Optional
 
 interface AccountRepository : MongoRepository<Account, String> {
-    fun findAccountByMailEquals(mail: String): Optional<Account>
-    fun findAccountByMailEqualsAndPasswordEquals(mail: String, password: String): Optional<Account>
+    fun findAccountByMail(mail: String): Optional<Account>
+    fun findAccountByMailEqualsAndPassword(mail: String, password: String): Optional<Account>
 }

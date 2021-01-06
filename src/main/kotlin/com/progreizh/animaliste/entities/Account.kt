@@ -18,5 +18,4 @@ data class Account(
     val phoneNumber: String? = null,
     val legalStatusName: String? = null,
     val registerDate: Date = Date(),
-
     )

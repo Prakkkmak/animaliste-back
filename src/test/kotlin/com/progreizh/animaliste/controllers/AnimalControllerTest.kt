@@ -95,7 +95,6 @@ class AnimalControllerTest @Autowired constructor(
         val oldAnimal = saveOneAnimal()
         val oldSpecie = oldAnimal.specie
         val newSpecie = "Chien"
-
         val newAnimal = Animal(
             defaultAnimalId,
             "Watson",

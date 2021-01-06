@@ -14,7 +14,7 @@ class AccountController(private val repository: AccountRepository) {
      * Récupère tous les comptes.
      */
     @GetMapping
-    fun getAllAccounts(): ResponseEntity<List<Account>>{
+    fun getAccounts(): ResponseEntity<List<Account>>{
         val accounts = repository.findAll()
         return ResponseEntity.ok(accounts)
     }
@@ -23,7 +23,7 @@ class AccountController(private val repository: AccountRepository) {
      * Récupère le compte en fonction de son identifiant.
      */
     @GetMapping("/{id}")
-    fun getOneAccountById(@PathVariable("id") id: String): ResponseEntity<Account> {
+    fun getAccount(@PathVariable("id") id: String): ResponseEntity<Account> {
         val accountOptional = repository.findById(id)
         return if (accountOptional.isEmpty)
             ResponseEntity(HttpStatus.NOT_FOUND)
@@ -32,7 +32,7 @@ class AccountController(private val repository: AccountRepository) {
     }
 
     /**
-     * Retourne le compte correspondant au couple mail/mot de passe ssi celui-ci existe ou un message d'erreur
+     * Retourne le compte correspondant au couple mail/mot de passe ssi celui-ci existe ou un message d'erreur.
      */
     @GetMapping("/login")
     fun getAccountByMailAndPassword(@RequestParam mail: String, @RequestParam password: String): ResponseEntity<Account> {

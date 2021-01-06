@@ -1,7 +1,6 @@
 package com.progreizh.animaliste.controllers
 
 import com.progreizh.animaliste.entities.Account
-import com.progreizh.animaliste.entities.AccountLoginForm
 import com.progreizh.animaliste.repositories.AccountRepository
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -36,17 +35,17 @@ class AccountController(private val repository: AccountRepository) {
      * Retourne le compte correspondant au couple mail/mot de passe ssi celui-ci existe ou un message d'erreur
      */
     @GetMapping("/login")
-    fun getOneAccountByLoginForm(@RequestBody account: AccountLoginForm): ResponseEntity<Any> {
-        var accountOptional: Optional<Account> = repository.findAccountByMailEqualsAndPasswordEquals(account.mail, account.password)
+    fun getOneAccountByLoginForm(@RequestParam mail: String, @RequestParam password: String): ResponseEntity<Any> {
+        var accountOptional: Optional<Account> = repository.findAccountByMailEqualsAndPasswordEquals(mail, password)
         if(accountOptional.isEmpty)
-            accountOptional = repository.findAccountByMailEquals(account.mail)
+            accountOptional = repository.findAccountByMailEquals(mail)
         else
             return ResponseEntity.ok(accountOptional.get())
 
         return if (accountOptional.isEmpty)
-            ResponseEntity("Mot de passe incorrect", HttpStatus.NOT_FOUND)
-        else
             ResponseEntity("E-mail et mot de passe incorrects", HttpStatus.NOT_FOUND)
+        else
+            ResponseEntity("Mot de passe incorrect", HttpStatus.NOT_FOUND)
     }
 
     /**

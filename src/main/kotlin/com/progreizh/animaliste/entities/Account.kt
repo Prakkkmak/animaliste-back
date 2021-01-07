@@ -4,7 +4,7 @@ import org.bson.types.ObjectId
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 import java.util.Date
-import javax.annotation.processing.Generated
+import javax.annotation.Generated
 
 @Document
 data class Account(

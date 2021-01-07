@@ -25,7 +25,7 @@ class AccountController(private val repository: AccountRepository) {
     @GetMapping("/{id}")
     fun getAccount(@PathVariable("id") id: String): ResponseEntity<Account> {
         val accountOptional = repository.findById(id)
-        return if (accountOptional.isEmpty)
+        return if (!accountOptional.isPresent)
             ResponseEntity(HttpStatus.NOT_FOUND)
         else
             ResponseEntity.ok(accountOptional.get())
@@ -37,7 +37,7 @@ class AccountController(private val repository: AccountRepository) {
     @GetMapping("/login")
     fun getAccountByMailAndPassword(@RequestParam mail: String, @RequestParam password: String): ResponseEntity<Account> {
         val accountOptional: Optional<Account> = repository.findAccountByMailEqualsAndPassword(mail, password)
-        return if(accountOptional.isEmpty)
+        return if(!accountOptional.isPresent)
             ResponseEntity(HttpStatus.UNAUTHORIZED)
         else
             ResponseEntity.ok(accountOptional.get())
@@ -68,7 +68,7 @@ class AccountController(private val repository: AccountRepository) {
     @DeleteMapping("/{id}")
     fun deleteAccount(@PathVariable("id") id: String): ResponseEntity<Account> {
         val accountOptional = repository.findById(id)
-        return if (accountOptional.isEmpty)
+        return if (!accountOptional.isPresent)
             ResponseEntity(HttpStatus.NOT_FOUND)
         else {
             val account = accountOptional.get()

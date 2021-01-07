@@ -24,7 +24,7 @@ class AnimalController(private val repository: AnimalRepository) {
     @GetMapping("/{id}")
     fun getOneAnimals(@PathVariable("id") id: String): ResponseEntity<Animal> {
         val animalOptional = repository.findById(id)
-        return if (animalOptional.isEmpty)
+        return if (!animalOptional.isPresent)
             ResponseEntity(HttpStatus.NOT_FOUND)
         else
             ResponseEntity.ok(animalOptional.get())
@@ -54,7 +54,7 @@ class AnimalController(private val repository: AnimalRepository) {
     @DeleteMapping("/{id}")
     fun deleteAnimal(@PathVariable("id") id: String): ResponseEntity<Animal> {
         val animalOptional = repository.findById(id)
-        return if (animalOptional.isEmpty)
+        return if (!animalOptional.isPresent)
             ResponseEntity(HttpStatus.NOT_FOUND)
         else {
             val animal = animalOptional.get()

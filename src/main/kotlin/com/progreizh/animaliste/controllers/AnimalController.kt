@@ -30,6 +30,12 @@ class AnimalController(private val repository: AnimalRepository) {
             ResponseEntity.ok(animalOptional.get())
     }
 
+    @RequestMapping(params = ["specie"])
+    fun getAnimalsBySpecie(@RequestParam("specie") specie: String): ResponseEntity<List<Animal>> {
+        val animals = repository.findAnimalsBySpecie(specie)
+        return ResponseEntity.ok(animals)
+    }
+
     /**
      * Ajoute un animal.
      */

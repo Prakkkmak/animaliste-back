@@ -6,4 +6,5 @@ import org.springframework.data.mongodb.repository.MongoRepository
 import java.util.*
 
 interface AnimalRepository : MongoRepository<Animal, String> {
+    fun findAnimalsBySpecie(specie: String) : List<Animal>
 }

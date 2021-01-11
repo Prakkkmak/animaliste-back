@@ -16,6 +16,10 @@ import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import java.util.HashMap
+
+
+
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(SpringExtension::class)
@@ -129,5 +133,57 @@ class AnimalControllerTest @Autowired constructor(
         )
 
         assertEquals(HttpStatus.NOT_FOUND, responseAfterDelete.statusCode)
+    }
+
+    @Test
+    fun `should find animals by specie`(){
+        animalRepository.save(Animal(
+            ObjectId.get().toHexString(),
+            "Watson",
+            "Chien",
+            true
+        ))
+        animalRepository.save(Animal(
+            ObjectId.get().toHexString(),
+            "Bibouche",
+            "Chat",
+            true
+        ))
+        animalRepository.save(Animal(
+            ObjectId.get().toHexString(),
+            "Robert",
+            "Chien",
+            true
+        ))
+        val urlParams = HashMap<String, String>()
+        urlParams["specie"] = "Chien"
+        val response = restTemplate.getForEntity(
+            getRootUrl() + "?specie={specie}",
+            List::class.java,
+            urlParams
+        )
+        assertEquals(HttpStatus.OK, response.statusCode)
+        assertNotNull(response.body)
+        assertEquals(2, response.body?.size)
+    }
+
+    @Test
+    fun `should not find animals by unknow specie`(){
+        animalRepository.save(Animal(
+            ObjectId.get().toHexString(),
+            "Watson",
+            "Chien",
+            true
+        ))
+        val urlParams = HashMap<String, String>()
+        urlParams["specie"] = "UNKNOW"
+        val response = restTemplate.getForEntity(
+            getRootUrl() + "?specie={specie}",
+            List::class.java,
+            urlParams
+        )
+        assertEquals(HttpStatus.OK, response.statusCode)
+        assertNotNull(response.body)
+        assertEquals(0, response.body?.size)
     }
 }

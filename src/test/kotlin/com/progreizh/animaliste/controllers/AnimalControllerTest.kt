@@ -16,9 +16,8 @@ import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import java.util.HashMap
-
-
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -42,9 +41,18 @@ class AnimalControllerTest @Autowired constructor(
         true
     )
 
+    private val animals: List<Animal> = listOf(
+        defaultAnimal,
+        Animal(ObjectId.get().toHexString(), "Bubule", "Chat", false),
+        Animal(ObjectId.get().toHexString(), "Roxy", "Chien", true),
+        Animal(ObjectId.get().toHexString(), "Coboy", "Hamster", true)
+    )
+
+
+
     private fun getRootUrl(): String = "http://localhost:$port/animals"
 
-    private fun saveOneAnimal() = animalRepository.save(defaultAnimal)
+    private fun saveDefaultAnimal() = animalRepository.save(defaultAnimal)
 
     @BeforeEach
     fun setUp() {
@@ -53,7 +61,7 @@ class AnimalControllerTest @Autowired constructor(
 
     @Test
     fun `should return all animals`() {
-        saveOneAnimal()
+        saveDefaultAnimal()
         val response = restTemplate.getForEntity(
             getRootUrl(),
             List::class.java
@@ -65,7 +73,7 @@ class AnimalControllerTest @Autowired constructor(
 
     @Test
     fun `should return single animal by id`() {
-        saveOneAnimal()
+        saveDefaultAnimal()
 
         val response = restTemplate.getForEntity(
             getRootUrl() + "/$defaultAnimalId",
@@ -96,15 +104,9 @@ class AnimalControllerTest @Autowired constructor(
 
     @Test
     fun `should return single animal with new information`() {
-        val oldAnimal = saveOneAnimal()
+        val oldAnimal = saveDefaultAnimal()
         val oldSpecie = oldAnimal.specie
-        val newSpecie = "Chien"
-        val newAnimal = Animal(
-            defaultAnimalId,
-            "Watson",
-            newSpecie,
-            true
-        )
+        val newAnimal = Animal(defaultAnimalId, "Roxy", "Chien", true)
 
         restTemplate.put(
             getRootUrl() + "/$defaultAnimalId",
@@ -118,13 +120,13 @@ class AnimalControllerTest @Autowired constructor(
 
         assertEquals(HttpStatus.OK, response.statusCode)
         assertNotNull(response.body)
-        assertEquals(response.body?.specie, newSpecie)
-        assertNotEquals(response.body?.specie, oldSpecie)
+        assertEquals("Chien", response.body?.specie)
+        assertNotEquals(oldSpecie, response.body?.specie, )
     }
 
     @Test
     fun `should not found after deletion`() {
-        saveOneAnimal()
+        saveDefaultAnimal()
         restTemplate.delete(getRootUrl() + "/$defaultAnimalId", defaultAnimalId)
 
         val responseAfterDelete = restTemplate.getForEntity(
@@ -137,26 +139,9 @@ class AnimalControllerTest @Autowired constructor(
 
     @Test
     fun `should find animals by specie`(){
-        animalRepository.save(Animal(
-            ObjectId.get().toHexString(),
-            "Watson",
-            "Chien",
-            true
-        ))
-        animalRepository.save(Animal(
-            ObjectId.get().toHexString(),
-            "Bibouche",
-            "Chat",
-            true
-        ))
-        animalRepository.save(Animal(
-            ObjectId.get().toHexString(),
-            "Robert",
-            "Chien",
-            true
-        ))
+        animalRepository.saveAll(animals)
         val urlParams = HashMap<String, String>()
-        urlParams["specie"] = "Chien"
+        urlParams["specie"] = "Chat"
         val response = restTemplate.getForEntity(
             getRootUrl() + "?specie={specie}",
             List::class.java,
@@ -169,12 +154,7 @@ class AnimalControllerTest @Autowired constructor(
 
     @Test
     fun `should not find animals by unknow specie`(){
-        animalRepository.save(Animal(
-            ObjectId.get().toHexString(),
-            "Watson",
-            "Chien",
-            true
-        ))
+        animalRepository.save(animals[2])
         val urlParams = HashMap<String, String>()
         urlParams["specie"] = "UNKNOW"
         val response = restTemplate.getForEntity(

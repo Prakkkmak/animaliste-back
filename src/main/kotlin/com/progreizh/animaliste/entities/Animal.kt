@@ -19,8 +19,6 @@ data class Animal(
         val chip: String? = null,
         val tattoo: String? = null,
         val description: String? = null,
-        val physicalDescription: String? = null,
-        val attitudeDescription: String? = null,
         val likes : String? = null,
         val dislikes: String? = null,
         val vaccines: String? = null,

@@ -1,7 +1,8 @@
 package com.progreizh.animaliste.controllers
 
-import com.progreizh.animaliste.entities.Account
-import com.progreizh.animaliste.repositories.AccountRepository
+import com.progreizh.animaliste.converters.UserConverter
+import com.progreizh.animaliste.dtos.UserDto
+import com.progreizh.animaliste.repositories.UserRepository
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -21,8 +22,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 @ExtendWith(SpringExtension::class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestPropertySource(properties = ["spring.data.mongodb.database=animaliste_test"])
-class AccountControllerTest @Autowired constructor(
-    private val accountRepository: AccountRepository,
+class UserControllerTest @Autowired constructor(
+    private val repository: UserRepository,
+    private val converter: UserConverter,
     private val restTemplate: TestRestTemplate
 ) {
     @LocalServerPort
@@ -30,7 +32,7 @@ class AccountControllerTest @Autowired constructor(
 
     private val defaultAccountId: String = ObjectId.get().toHexString()
 
-    private val defaultAccount: Account = Account(
+    private val defaultUser: UserDto = UserDto(
         defaultAccountId,
         "default@mail.com",
         "p@ssw0rd",
@@ -39,11 +41,11 @@ class AccountControllerTest @Autowired constructor(
 
     private fun getRootUrl(): String = "http://localhost:$port/accounts"
 
-    private fun saveOneAccount() = accountRepository.save(defaultAccount)
+    private fun saveOneAccount() = repository.save(converter.convertFromDto(defaultUser))
 
     @BeforeEach
     fun setUp() {
-        accountRepository.deleteAll()
+        repository.deleteAll()
     }
 
     @Test
@@ -64,7 +66,7 @@ class AccountControllerTest @Autowired constructor(
 
         val response = restTemplate.getForEntity(
             getRootUrl() + "/$defaultAccountId",
-            Account::class.java
+            UserDto::class.java
         )
 
         Assertions.assertEquals(HttpStatus.OK, response.statusCode)
@@ -78,9 +80,9 @@ class AccountControllerTest @Autowired constructor(
 
         val response = restTemplate.getForEntity(
             getRootUrl() + "/login?mail={mail}&password={password}",
-            Account::class.java,
-            defaultAccount.mail,
-            defaultAccount.password
+            UserDto::class.java,
+            defaultUser.mail,
+            defaultUser.password
         )
 
         Assertions.assertEquals(HttpStatus.OK, response.statusCode)
@@ -106,7 +108,7 @@ class AccountControllerTest @Autowired constructor(
         val response = restTemplate.getForEntity(
             getRootUrl() + "/login?mail={mail}&password={password}",
             Any::class.java,
-            defaultAccount.mail,
+            defaultUser.mail,
             badPassword
         )
 
@@ -123,7 +125,7 @@ class AccountControllerTest @Autowired constructor(
             getRootUrl() + "/login?mail={mail}&password={password}",
             Any::class.java,
             badMail,
-            defaultAccount.password
+            defaultUser.password
         )
 
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, response.statusCode)
@@ -131,7 +133,7 @@ class AccountControllerTest @Autowired constructor(
 
     @Test
     fun `should return a new saved account`() {
-        val response = restTemplate.postForEntity<Account>(getRootUrl(), defaultAccount)
+        val response = restTemplate.postForEntity<UserDto>(getRootUrl(), defaultUser)
         Assertions.assertEquals(HttpStatus.CREATED, response.statusCode)
         Assertions.assertNotNull(response.body)
         Assertions.assertEquals(defaultAccountId, response.body?.id)
@@ -143,7 +145,7 @@ class AccountControllerTest @Autowired constructor(
         val oldName = oldAccount.name
         val newName = "Martin"
 
-        val newAccount = Account(
+        val newAccount = UserDto(
             defaultAccountId,
             "default@mail.fr",
             "p@ssw0rd",
@@ -157,7 +159,7 @@ class AccountControllerTest @Autowired constructor(
 
         val response = restTemplate.getForEntity(
             getRootUrl() + "/$defaultAccountId",
-            Account::class.java
+            UserDto::class.java
         )
 
         Assertions.assertEquals(HttpStatus.OK, response.statusCode)
@@ -173,7 +175,7 @@ class AccountControllerTest @Autowired constructor(
 
         val responseAfterDelete = restTemplate.getForEntity(
             getRootUrl() + "/$defaultAccountId",
-            Account::class.java
+            UserDto::class.java
         )
 
         Assertions.assertEquals(HttpStatus.NOT_FOUND, responseAfterDelete.statusCode)

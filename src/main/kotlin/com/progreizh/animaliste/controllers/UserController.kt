@@ -1,5 +1,6 @@
 package com.progreizh.animaliste.controllers
 
+import com.progreizh.animaliste.dtos.UserCredentialsDto
 import com.progreizh.animaliste.dtos.UserDto
 import com.progreizh.animaliste.services.UserService
 import org.springframework.http.HttpStatus
@@ -30,9 +31,9 @@ class UserController(private val service: UserService) {
     /**
      * Retourne le compte correspondant au couple mail/mot de passe ssi celui-ci existe ou un message d'erreur.
      */
-    @GetMapping("/login")
-    fun getAccountByMailAndPassword(@RequestParam mail: String, @RequestParam password: String): ResponseEntity<UserDto> {
-        return ResponseEntity.ok(service.findUserByMailAndPassword(mail, password))
+    @PostMapping("/login")
+    fun getAccountByMailAndPassword(@RequestBody userCredentialsDto: UserCredentialsDto): ResponseEntity<UserDto> {
+        return ResponseEntity.ok(service.findUserByMailAndPassword(userCredentialsDto.mail, userCredentialsDto.password))
     }
 
     /**

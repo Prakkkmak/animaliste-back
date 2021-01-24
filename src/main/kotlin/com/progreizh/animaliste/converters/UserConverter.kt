@@ -2,6 +2,7 @@ package com.progreizh.animaliste.converters
 
 import com.progreizh.animaliste.dtos.UserDto
 import com.progreizh.animaliste.entities.User
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Component
 
 @Component

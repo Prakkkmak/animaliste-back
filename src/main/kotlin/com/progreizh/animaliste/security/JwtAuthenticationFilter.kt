@@ -8,6 +8,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.progreizh.animaliste.dtos.UserCredentialsDto
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import java.io.IOException
@@ -17,8 +18,10 @@ import javax.servlet.FilterChain
 
 import com.progreizh.animaliste.security.SecurityConstants
 import com.progreizh.animaliste.security.SecurityConstants.Companion.EXPIRATION_TIME
+import com.progreizh.animaliste.security.SecurityConstants.Companion.LOGIN_URL
 import com.progreizh.animaliste.security.SecurityConstants.Companion.SECRET
 import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.BadCredentialsException
 
 // https://www.freecodecamp.org/news/how-to-setup-jwt-authorization-and-authentication-in-spring/
 
@@ -26,22 +29,26 @@ class JwtAuthenticationFilter(authenticationManager: AuthenticationManager) : Us
 
     init {
         this.authenticationManager = authenticationManager
+        setFilterProcessesUrl(LOGIN_URL);
     }
 
     @Throws(IOException::class)
     override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {
         try {
-            val credentials: User = ObjectMapper().readValue(request.inputStream, User::class.java)
+            val credentials: UserCredentialsDto = ObjectMapper().readValue(request.inputStream, UserCredentialsDto::class.java)
+
             return authenticationManager.authenticate(
                 UsernamePasswordAuthenticationToken(
-                    credentials.username,
+                    credentials.mail,
                     credentials.password,
                     ArrayList()
                 )
             )
-
         } catch (e : IOException) {
             throw RuntimeException(e);
+        } catch (e: BadCredentialsException){
+            print(e.stackTrace)
+            throw e
         }
     }
 

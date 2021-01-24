@@ -6,6 +6,7 @@ class SecurityConstants {
         const val EXPIRATION_TIME = 900000 // 15 mins
         const val TOKEN_PREFIX = "Bearer "
         const val HEADER_STRING = "Authorization"
-        const val SIGN_UP_URL = "/login"
+        const val SIGN_UP_URL = "/users/register"
+        const val LOGIN_URL = "/users/login"
     }
 }

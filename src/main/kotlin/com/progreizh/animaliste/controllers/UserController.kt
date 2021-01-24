@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*
 import java.util.Optional
 
 @RestController
-@RequestMapping("/accounts")
+@RequestMapping("/users")
 class UserController(private val service: UserService) {
     /**
      * Récupère tous les comptes.
@@ -31,7 +31,7 @@ class UserController(private val service: UserService) {
     /**
      * Retourne le compte correspondant au couple mail/mot de passe ssi celui-ci existe ou un message d'erreur.
      */
-    @PostMapping("/login")
+    @GetMapping("/login")
     fun getAccountByMailAndPassword(@RequestBody userCredentialsDto: UserCredentialsDto): ResponseEntity<UserDto> {
         return ResponseEntity.ok(service.findUserByMailAndPassword(userCredentialsDto.mail, userCredentialsDto.password))
     }

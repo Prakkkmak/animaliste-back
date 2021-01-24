@@ -20,7 +20,7 @@ class MyUserDetailsService : UserDetailsService {
         }
         else {
             val myUser = res.get()
-            val grantedAuthorities = arrayListOf<SimpleGrantedAuthority>(SimpleGrantedAuthority("ADMIN"))
+            val grantedAuthorities = arrayListOf(SimpleGrantedAuthority("ADMIN"))
             return User(
                 myUser.mail,
                 myUser.password,

@@ -48,7 +48,7 @@ class JwtAuthorizationFilter(authenticationManager: AuthenticationManager) : Bas
         val token = request.getHeader(HEADER_STRING)
         if (token != null) {
             // parse the token.
-            val user = JWT.require(HMAC512(SECRET.toByte().toString()))
+            val user = JWT.require(HMAC512(SECRET))
                 .build()
                 .verify(token.replace(TOKEN_PREFIX, ""))
                 .subject

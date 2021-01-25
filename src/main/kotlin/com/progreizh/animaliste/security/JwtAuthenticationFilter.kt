@@ -62,7 +62,7 @@ class JwtAuthenticationFilter(authenticationManager: AuthenticationManager) : Us
         val token: String = JWT.create()
             .withSubject((auth.principal as User).username)
             .withExpiresAt(Date(System.currentTimeMillis() + EXPIRATION_TIME))
-            .sign(HMAC512(SECRET.toByte().toString()))
+            .sign(HMAC512(SECRET))
         val body = (auth.principal as User).username + " " + token
         res.writer.write(body)
         res.writer.flush()

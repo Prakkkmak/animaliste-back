@@ -1,4 +1,4 @@
-package com.progreizh.animaliste.security.config
+package com.progreizh.animaliste.security
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm.HMAC512
@@ -16,10 +16,10 @@ import java.util.*
 
 import javax.servlet.FilterChain
 
-import com.progreizh.animaliste.security.SecurityConstants
 import com.progreizh.animaliste.security.SecurityConstants.Companion.EXPIRATION_TIME
 import com.progreizh.animaliste.security.SecurityConstants.Companion.LOGIN_URL
 import com.progreizh.animaliste.security.SecurityConstants.Companion.SECRET
+import com.progreizh.animaliste.security.SecurityConstants.Companion.TOKEN_PREFIX
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.BadCredentialsException
 
@@ -29,7 +29,7 @@ class JwtAuthenticationFilter(authenticationManager: AuthenticationManager) : Us
 
     init {
         this.authenticationManager = authenticationManager
-        setFilterProcessesUrl(LOGIN_URL);
+        setFilterProcessesUrl(LOGIN_URL)
     }
 
     @Throws(IOException::class)
@@ -63,7 +63,8 @@ class JwtAuthenticationFilter(authenticationManager: AuthenticationManager) : Us
             .withSubject((auth.principal as User).username)
             .withExpiresAt(Date(System.currentTimeMillis() + EXPIRATION_TIME))
             .sign(HMAC512(SECRET))
-        val body = (auth.principal as User).username + " " + token
+        //val body = (auth.principal as User).username + " " + token
+        val body = "$TOKEN_PREFIX $token"
         res.writer.write(body)
         res.writer.flush()
     }

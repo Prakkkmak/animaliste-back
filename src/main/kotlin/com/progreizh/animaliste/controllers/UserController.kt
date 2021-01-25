@@ -31,7 +31,7 @@ class UserController(private val service: UserService) {
     /**
      * Retourne le compte correspondant au couple mail/mot de passe ssi celui-ci existe ou un message d'erreur.
      */
-    @GetMapping("/login")
+    @PostMapping("/login")
     fun getAccountByMailAndPassword(@RequestBody userCredentialsDto: UserCredentialsDto): ResponseEntity<UserDto> {
         return ResponseEntity.ok(service.findUserByMailAndPassword(userCredentialsDto.mail, userCredentialsDto.password))
     }
@@ -39,9 +39,9 @@ class UserController(private val service: UserService) {
     /**
      * Ajoute un compte.
      */
-    @PostMapping
-    fun createAccount(@RequestBody userDto: UserDto): ResponseEntity<UserDto> {
-        return ResponseEntity.ok(service.create(userDto))
+    @PostMapping("/register")
+    fun createAccount(@RequestBody userCredentialsDto: UserCredentialsDto): ResponseEntity<UserDto> {
+        return ResponseEntity.ok(service.create(userCredentialsDto))
     }
 
     /**

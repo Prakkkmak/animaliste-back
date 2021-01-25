@@ -1,5 +1,6 @@
 package com.progreizh.animaliste.converters
 
+import com.progreizh.animaliste.dtos.UserCredentialsDto
 import com.progreizh.animaliste.dtos.UserDto
 import com.progreizh.animaliste.entities.User
 import org.springframework.security.core.userdetails.UserDetails
@@ -26,6 +27,13 @@ class UserConverter : Converter<User, UserDto>() {
             source.name,
             source.surname,
             source.phoneNumber
+        )
+    }
+
+    fun convertFromUserCredentials(source: UserCredentialsDto): UserDto {
+        return UserDto(
+            mail = source.mail,
+            password = source.password
         )
     }
 

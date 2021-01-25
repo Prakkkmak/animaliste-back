@@ -1,6 +1,7 @@
 package com.progreizh.animaliste.services
 
 import com.progreizh.animaliste.converters.UserConverter
+import com.progreizh.animaliste.dtos.UserCredentialsDto
 import com.progreizh.animaliste.dtos.UserDto
 import com.progreizh.animaliste.entities.User
 import com.progreizh.animaliste.repositories.UserRepository
@@ -9,6 +10,8 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
+import org.springframework.security.crypto.bcrypt.BCrypt
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import java.io.Serializable
 import java.lang.RuntimeException
@@ -47,9 +50,19 @@ class UserService(val repository: UserRepository, val converter: UserConverter) 
             return converter.convertToDto(userOptional.get())
     }
 
+    fun findUserByCredentials(userCredentialsDto: UserCredentialsDto): UserDto {
+        return findUserByMailAndPassword(userCredentialsDto.mail, userCredentialsDto.password)
+    }
+
     fun create(userDto: UserDto): UserDto {
+        userDto.password = BCryptPasswordEncoder().encode(userDto.password)
         val newUser = repository.insert(converter.convertFromDto(userDto))
         return converter.convertToDto(newUser)
+    }
+
+    fun create(userCredentialsDto: UserCredentialsDto): UserDto {
+        val userDto: UserDto = converter.convertFromUserCredentials(userCredentialsDto)
+        return create(userDto)
     }
 
     fun update(userDto: UserDto): UserDto {

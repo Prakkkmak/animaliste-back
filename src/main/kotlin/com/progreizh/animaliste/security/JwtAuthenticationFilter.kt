@@ -1,6 +1,7 @@
 package com.progreizh.animaliste.security
 
 import com.auth0.jwt.JWT
+import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.algorithms.Algorithm.HMAC512
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.userdetails.User
@@ -59,12 +60,13 @@ class JwtAuthenticationFilter(authenticationManager: AuthenticationManager) : Us
         chain: FilterChain,
         auth: Authentication
     ) {
+        val algorithm : Algorithm = HMAC512("a")
         val token: String = JWT.create()
             .withSubject((auth.principal as User).username)
             .withExpiresAt(Date(System.currentTimeMillis() + EXPIRATION_TIME))
-            .sign(HMAC512(SECRET))
+            .sign(algorithm)
         //val body = (auth.principal as User).username + " " + token
-        val body = "$TOKEN_PREFIX $token"
+        val body = "$TOKEN_PREFIX$token"
         res.writer.write(body)
         res.writer.flush()
     }

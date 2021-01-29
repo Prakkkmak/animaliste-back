@@ -22,6 +22,7 @@ import java.util.ArrayList
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.algorithms.Algorithm.HMAC512
+import com.progreizh.animaliste.security.SecurityConstants.Companion.SECRET
 
 
 class JwtAuthorizationFilter(authenticationManager: AuthenticationManager) : BasicAuthenticationFilter(authenticationManager) {
@@ -45,7 +46,7 @@ class JwtAuthorizationFilter(authenticationManager: AuthenticationManager) : Bas
     // Reads the JWT from the Authorization header, and then uses JWT to validate the token
     private fun getAuthentication(request: HttpServletRequest): UsernamePasswordAuthenticationToken {
         val token = request.getHeader(HEADER_STRING)
-        val algorithm : Algorithm = HMAC512("a")
+        val algorithm : Algorithm = HMAC512(SECRET)
         // parse the token.
         val user = JWT.require(algorithm)
             .build()

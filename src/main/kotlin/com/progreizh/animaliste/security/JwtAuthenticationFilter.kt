@@ -48,7 +48,6 @@ class JwtAuthenticationFilter(authenticationManager: AuthenticationManager) : Us
         } catch (e : IOException) {
             throw RuntimeException(e);
         } catch (e: BadCredentialsException){
-            print(e.stackTrace)
             throw e
         }
     }
@@ -60,12 +59,11 @@ class JwtAuthenticationFilter(authenticationManager: AuthenticationManager) : Us
         chain: FilterChain,
         auth: Authentication
     ) {
-        val algorithm : Algorithm = HMAC512("a")
+        val algorithm : Algorithm = HMAC512(SECRET)
         val token: String = JWT.create()
             .withSubject((auth.principal as User).username)
             .withExpiresAt(Date(System.currentTimeMillis() + EXPIRATION_TIME))
             .sign(algorithm)
-        //val body = (auth.principal as User).username + " " + token
         val body = "$TOKEN_PREFIX$token"
         res.writer.write(body)
         res.writer.flush()

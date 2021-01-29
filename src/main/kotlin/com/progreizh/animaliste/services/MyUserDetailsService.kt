@@ -13,8 +13,8 @@ class MyUserDetailsService : UserDetailsService {
     @Autowired
     private lateinit var userRepository: UserRepository
 
-    override fun loadUserByUsername(username: String): UserDetails {
-        val res = userRepository.findUserByMail(username)
+    override fun loadUserByUsername(mail: String): UserDetails {
+        val res = userRepository.findUserByMail(mail)
         if(!res.isPresent){
             throw UsernameNotFoundException("Username not found")
         }

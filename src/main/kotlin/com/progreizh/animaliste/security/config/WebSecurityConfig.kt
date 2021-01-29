@@ -29,15 +29,6 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
     // https://www.freecodecamp.org/news/how-to-setup-jwt-authorization-and-authentication-in-spring/
 
     override fun configure(http: HttpSecurity) {
-        /*http.cors().and()
-            .authorizeRequests()
-            .antMatchers(LOGIN_URL).permitAll()
-            .anyRequest().authenticated()
-            .and()
-            .addFilter(JwtAuthenticationFilter(authenticationManager()))
-            .addFilter(JwtAuthorizationFilter(authenticationManager()))
-            // this disables session creation on Spring Security
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);*/
         http.cors().and().csrf().disable()
             .authorizeRequests()
                 .antMatchers(LOGIN_URL, SIGN_UP_URL).permitAll()

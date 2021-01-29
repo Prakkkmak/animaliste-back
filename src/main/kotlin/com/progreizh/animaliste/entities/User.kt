@@ -7,7 +7,7 @@ import java.util.Date
 import javax.annotation.Generated
 
 @Document
-data class Account(
+data class User(
     @Id
     @Generated
     val id: String = ObjectId.get().toString(),
@@ -16,6 +16,5 @@ data class Account(
     val name: String? = null,
     val surname: String? = null,
     val phoneNumber: String? = null,
-    val legalStatusName: String? = null,
     val registerDate: Date = Date(),
     )

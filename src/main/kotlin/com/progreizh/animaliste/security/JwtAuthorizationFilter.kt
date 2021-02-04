@@ -33,8 +33,8 @@ class JwtAuthorizationFilter(authenticationManager: AuthenticationManager) : Bas
         response: HttpServletResponse,
         chain: FilterChain
     ) {
-        val header = req.getHeader(HEADER_STRING)
-        if (!header.startsWith(TOKEN_PREFIX)) {
+        val header : String? = req.getHeader(HEADER_STRING)
+        if (header == null || !header.startsWith(TOKEN_PREFIX)) {
             chain.doFilter(req, response)
             return
         }

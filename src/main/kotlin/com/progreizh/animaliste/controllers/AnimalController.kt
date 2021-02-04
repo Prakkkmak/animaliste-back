@@ -1,5 +1,6 @@
 package com.progreizh.animaliste.controllers
 
+import com.progreizh.animaliste.daos.DocumentSequenceDao
 import com.progreizh.animaliste.entities.Animal
 import com.progreizh.animaliste.repositories.AnimalRepository
 import org.springframework.http.HttpStatus
@@ -8,7 +9,8 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/animals")
-class AnimalController(private val repository: AnimalRepository) {
+class AnimalController(private val repository: AnimalRepository,
+                       private val documentSequenceDao: DocumentSequenceDao) {
     /**
      * Récupère tous les animaux.
      */
@@ -41,6 +43,8 @@ class AnimalController(private val repository: AnimalRepository) {
      */
     @PostMapping
     fun createAnimal(@RequestBody animal: Animal): ResponseEntity<Animal> {
+        var animalInsert = animal
+        animalInsert.id = documentSequenceDao.generateSequence("animalid").toString()
         val newAnimal = repository.insert(animal)
         return ResponseEntity(newAnimal, HttpStatus.CREATED)
     }

@@ -1,16 +1,13 @@
 package com.progreizh.animaliste.entities
 
-import org.bson.types.ObjectId
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
-import java.util.*
-import javax.annotation.Generated
+import java.util.Date
 
 @Document
 data class Animal(
         @Id
-        @Generated
-        val id: String = ObjectId.get().toHexString(),
+        var id: String,
         val name: String,
         val specie: String,
         val sex: Boolean,

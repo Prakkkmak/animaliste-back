@@ -1,7 +1,9 @@
 package com.progreizh.animaliste.controllers
 
+import com.progreizh.animaliste.daos.DocumentSequenceDao
 import com.progreizh.animaliste.entities.Animal
 import com.progreizh.animaliste.repositories.AnimalRepository
+import com.progreizh.animaliste.repositories.SequenceGenearatorDaoImpl
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -17,7 +19,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -26,13 +27,14 @@ import kotlin.collections.ArrayList
 @TestPropertySource(properties = ["spring.data.mongodb.database=animaliste_test"])
 class AnimalControllerTest @Autowired constructor(
     private val animalRepository: AnimalRepository,
-    private val restTemplate: TestRestTemplate
+    private val restTemplate: TestRestTemplate,
+    private val documentSequenceDao : DocumentSequenceDao
 ) {
 
     @LocalServerPort
     protected var port: Int = 0
 
-    private val defaultAnimalId: String = ObjectId.get().toHexString()
+    private val defaultAnimalId: String = documentSequenceDao.generateSequence("animalid").toString()
 
     private val defaultAnimal: Animal = Animal(
         defaultAnimalId,
@@ -43,9 +45,21 @@ class AnimalControllerTest @Autowired constructor(
 
     private val animals: List<Animal> = listOf(
         defaultAnimal,
-        Animal(ObjectId.get().toHexString(), "Bubule", "Chat", false),
-        Animal(ObjectId.get().toHexString(), "Roxy", "Chien", true),
-        Animal(ObjectId.get().toHexString(), "Coboy", "Hamster", true)
+        Animal(documentSequenceDao.generateSequence("animalid").toString(),
+            "Bubule",
+            "Chat",
+            false
+        ),
+        Animal(documentSequenceDao.generateSequence("animalid").toString(),
+            "Roxy",
+            "Chien",
+            true
+        ),
+        Animal(documentSequenceDao.generateSequence("animalid").toString(),
+            "Coboy",
+            "Hamster",
+            true
+        )
     )
 
 

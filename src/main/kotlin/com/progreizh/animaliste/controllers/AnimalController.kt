@@ -1,22 +1,22 @@
 package com.progreizh.animaliste.controllers
 
-import com.progreizh.animaliste.daos.DocumentSequenceDao
 import com.progreizh.animaliste.entities.Animal
-import com.progreizh.animaliste.repositories.AnimalRepository
+import com.progreizh.animaliste.services.AnimalService
+import com.progreizh.animaliste.services.SequenceGenearatorService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/animals")
-class AnimalController(private val repository: AnimalRepository,
-                       private val documentSequenceDao: DocumentSequenceDao) {
+class AnimalController(private val animalService: AnimalService,
+                       private val sequenceGenearatorService: SequenceGenearatorService) {
     /**
-     * Récupère tous les animaux.
+     * Récupère tous les animaux dans une ResponseEntity.
      */
     @GetMapping
     fun getAllAnimals(): ResponseEntity<List<Animal>> {
-        val animals = repository.findAll()
+        val animals = animalService.findAll()
         return ResponseEntity.ok(animals)
     }
 
@@ -25,7 +25,7 @@ class AnimalController(private val repository: AnimalRepository,
      */
     @GetMapping("/{id}")
     fun getOneAnimals(@PathVariable("id") id: String): ResponseEntity<Animal> {
-        val animalOptional = repository.findById(id)
+        val animalOptional = animalService.findById(id)
         return if (!animalOptional.isPresent)
             ResponseEntity(HttpStatus.NOT_FOUND)
         else
@@ -34,7 +34,7 @@ class AnimalController(private val repository: AnimalRepository,
 
     @RequestMapping(params = ["specie"])
     fun getAnimalsBySpecie(@RequestParam("specie") specie: String): ResponseEntity<List<Animal>> {
-        val animals = repository.findAnimalsBySpecie(specie)
+        val animals = animalService.findAnimalsBySpecie(specie)
         return ResponseEntity.ok(animals)
     }
 
@@ -42,10 +42,10 @@ class AnimalController(private val repository: AnimalRepository,
      * Ajoute un animal.
      */
     @PostMapping
-    fun createAnimal(@RequestBody animal: Animal): ResponseEntity<Animal> {
-        var animalInsert = animal
-        animalInsert.id = documentSequenceDao.generateSequence("animalid").toString()
-        val newAnimal = repository.insert(animal)
+    fun createAnimal(@RequestBody animalDto: Animal): ResponseEntity<Animal> {
+        var animalInsert = animalDto
+        animalInsert.sequencedId = sequenceGenearatorService.generateSequence("animalid")
+        val newAnimal = animalService.create(animalDto)
         return ResponseEntity(newAnimal, HttpStatus.CREATED)
     }
 
@@ -53,8 +53,8 @@ class AnimalController(private val repository: AnimalRepository,
      * Modifie l'animal fonction de son identifiant et des nouvelles données.
      */
     @PutMapping("/{id}")
-    fun putAnimal(@PathVariable("id") id: String, @RequestBody animal: Animal): ResponseEntity<Animal> {
-        val newAnimal = repository.save(animal)
+    fun putAnimal(@PathVariable("id") id: String, @RequestBody animalDto: Animal): ResponseEntity<Animal> {
+        val newAnimal = animalService.update(animalDto)
         return ResponseEntity(newAnimal, HttpStatus.CREATED)
     }
 
@@ -63,12 +63,12 @@ class AnimalController(private val repository: AnimalRepository,
      */
     @DeleteMapping("/{id}")
     fun deleteAnimal(@PathVariable("id") id: String): ResponseEntity<Animal> {
-        val animalOptional = repository.findById(id)
+        val animalOptional = animalService.findById(id)
         return if (!animalOptional.isPresent)
             ResponseEntity(HttpStatus.NOT_FOUND)
         else {
             val animal = animalOptional.get()
-            repository.delete(animal)
+            animalService.delete(animal)
             ResponseEntity.ok(animal)
         }
     }

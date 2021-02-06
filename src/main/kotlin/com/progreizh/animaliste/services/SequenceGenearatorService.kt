@@ -1,17 +1,16 @@
-package com.progreizh.animaliste.repositories
+package com.progreizh.animaliste.services
 
-import com.progreizh.animaliste.daos.DocumentSequenceDao
 import com.progreizh.animaliste.entities.DocumentSequence
 import org.springframework.data.mongodb.core.FindAndModifyOptions.options
 import org.springframework.data.mongodb.core.MongoOperations
 import org.springframework.data.mongodb.core.query.Query.query
 import org.springframework.data.mongodb.core.query.Update
 import org.springframework.data.mongodb.core.query.where
-import org.springframework.stereotype.Repository
+import org.springframework.stereotype.Service
 
-@Repository
-class SequenceGenearatorDaoImpl(private val mongoOperations: MongoOperations) : DocumentSequenceDao {
-    override fun generateSequence(name : String) : Number{
+@Service
+class SequenceGenearatorService(private val mongoOperations: MongoOperations) {
+    fun generateSequence(name : String) : Number{
         val counter : DocumentSequence? = mongoOperations.findAndModify(
             query(where(DocumentSequence::id).`is`(name)),
             Update().inc("value", 1), options().returnNew(true).upsert(true),

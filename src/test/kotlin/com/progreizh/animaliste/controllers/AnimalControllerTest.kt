@@ -2,6 +2,7 @@ package com.progreizh.animaliste.controllers
 
 import com.progreizh.animaliste.entities.Animal
 import com.progreizh.animaliste.repositories.AnimalRepository
+import com.progreizh.animaliste.services.SequenceGenearatorService
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -17,7 +18,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -34,25 +34,40 @@ class AnimalControllerTest @Autowired constructor(
 
     private val defaultAnimalId: String = ObjectId.get().toHexString()
 
-    private val defaultAnimal: Animal = Animal(
+    private val defaultAnimalDto: Animal = Animal(
         defaultAnimalId,
         "Watson",
         "Chat",
         true
     )
 
-    private val animals: List<Animal> = listOf(
-        defaultAnimal,
-        Animal(ObjectId.get().toHexString(), "Bubule", "Chat", false),
-        Animal(ObjectId.get().toHexString(), "Roxy", "Chien", true),
-        Animal(ObjectId.get().toHexString(), "Coboy", "Hamster", true)
+    private val animalDtos: List<Animal> = listOf(
+        defaultAnimalDto,
+        Animal(
+            ObjectId.get().toHexString(),
+            "Bubule",
+            "Chat",
+            false
+        ),
+        Animal(
+            ObjectId.get().toHexString(),
+            "Roxy",
+            "Chien",
+            true
+        ),
+        Animal(
+            ObjectId.get().toHexString(),
+            "Coboy",
+            "Hamster",
+            true
+        )
     )
 
 
 
     private fun getRootUrl(): String = "http://localhost:$port/animals"
 
-    private fun saveDefaultAnimal() = animalRepository.save(defaultAnimal)
+    private fun saveDefaultAnimal() = animalRepository.save(defaultAnimalDto)
 
     @BeforeEach
     fun setUp() {
@@ -96,7 +111,7 @@ class AnimalControllerTest @Autowired constructor(
 
     @Test
     fun `should return a new saved animal`() {
-        val response = restTemplate.postForEntity<Animal>(getRootUrl(), defaultAnimal)
+        val response = restTemplate.postForEntity<Animal>(getRootUrl(), defaultAnimalDto)
         assertEquals(HttpStatus.CREATED, response.statusCode)
         assertNotNull(response.body)
         assertEquals(defaultAnimalId, response.body?.id)
@@ -139,7 +154,7 @@ class AnimalControllerTest @Autowired constructor(
 
     @Test
     fun `should find animals by specie`(){
-        animalRepository.saveAll(animals)
+        animalRepository.saveAll(animalDtos)
         val urlParams = HashMap<String, String>()
         urlParams["specie"] = "Chat"
         val response = restTemplate.getForEntity(
@@ -154,7 +169,7 @@ class AnimalControllerTest @Autowired constructor(
 
     @Test
     fun `should not find animals by unknow specie`(){
-        animalRepository.save(animals[2])
+        animalRepository.save(animalDtos[2])
         val urlParams = HashMap<String, String>()
         urlParams["specie"] = "UNKNOW"
         val response = restTemplate.getForEntity(

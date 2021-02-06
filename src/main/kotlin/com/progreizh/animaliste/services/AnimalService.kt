@@ -1,6 +1,7 @@
 package com.progreizh.animaliste.services
 
 import com.progreizh.animaliste.converters.AnimalConverter
+import com.progreizh.animaliste.dtos.AnimalDto
 import com.progreizh.animaliste.repositories.AnimalRepository
 import org.springframework.stereotype.Service
 import java.lang.RuntimeException

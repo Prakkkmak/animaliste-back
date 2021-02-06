@@ -29,20 +29,20 @@ class SpecieControllerTest @Autowired constructor(
     @LocalServerPort
     protected var port: Int = 0
 
-    private val animal1: Animal = Animal(
+    private val animalDto1: Animal = Animal(
         ObjectId.get().toHexString(),
         "Watson",
         "Chat",
         true
     )
-    private val animal2: Animal = Animal(
+    private val animalDto2: Animal = Animal(
         ObjectId.get().toHexString(),
         "Robert",
         "Chien",
         true
     )
 
-    private val animal3: Animal = Animal(
+    private val animalDto3: Animal = Animal(
         ObjectId.get().toHexString(),
         "CJ",
         "Chien",
@@ -52,9 +52,9 @@ class SpecieControllerTest @Autowired constructor(
     private fun getRootUrl(): String = "http://localhost:$port/species"
 
     private fun saveAnimals(){
-        animalRepository.save(animal1)
-        animalRepository.save(animal2)
-        animalRepository.save(animal3)
+        animalRepository.save(animalDto1)
+        animalRepository.save(animalDto2)
+        animalRepository.save(animalDto3)
     }
 
     @BeforeEach

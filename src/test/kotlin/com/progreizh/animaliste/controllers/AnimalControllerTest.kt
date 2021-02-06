@@ -1,9 +1,8 @@
 package com.progreizh.animaliste.controllers
 
-import com.progreizh.animaliste.daos.DocumentSequenceDao
 import com.progreizh.animaliste.entities.Animal
 import com.progreizh.animaliste.repositories.AnimalRepository
-import com.progreizh.animaliste.repositories.SequenceGenearatorDaoImpl
+import com.progreizh.animaliste.services.SequenceGenearatorService
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -27,35 +26,37 @@ import java.util.*
 @TestPropertySource(properties = ["spring.data.mongodb.database=animaliste_test"])
 class AnimalControllerTest @Autowired constructor(
     private val animalRepository: AnimalRepository,
-    private val restTemplate: TestRestTemplate,
-    private val documentSequenceDao : DocumentSequenceDao
+    private val restTemplate: TestRestTemplate
 ) {
 
     @LocalServerPort
     protected var port: Int = 0
 
-    private val defaultAnimalId: String = documentSequenceDao.generateSequence("animalid").toString()
+    private val defaultAnimalId: String = ObjectId.get().toHexString()
 
-    private val defaultAnimal: Animal = Animal(
+    private val defaultAnimalDto: Animal = Animal(
         defaultAnimalId,
         "Watson",
         "Chat",
         true
     )
 
-    private val animals: List<Animal> = listOf(
-        defaultAnimal,
-        Animal(documentSequenceDao.generateSequence("animalid").toString(),
+    private val animalDtos: List<Animal> = listOf(
+        defaultAnimalDto,
+        Animal(
+            ObjectId.get().toHexString(),
             "Bubule",
             "Chat",
             false
         ),
-        Animal(documentSequenceDao.generateSequence("animalid").toString(),
+        Animal(
+            ObjectId.get().toHexString(),
             "Roxy",
             "Chien",
             true
         ),
-        Animal(documentSequenceDao.generateSequence("animalid").toString(),
+        Animal(
+            ObjectId.get().toHexString(),
             "Coboy",
             "Hamster",
             true
@@ -66,7 +67,7 @@ class AnimalControllerTest @Autowired constructor(
 
     private fun getRootUrl(): String = "http://localhost:$port/animals"
 
-    private fun saveDefaultAnimal() = animalRepository.save(defaultAnimal)
+    private fun saveDefaultAnimal() = animalRepository.save(defaultAnimalDto)
 
     @BeforeEach
     fun setUp() {
@@ -110,7 +111,7 @@ class AnimalControllerTest @Autowired constructor(
 
     @Test
     fun `should return a new saved animal`() {
-        val response = restTemplate.postForEntity<Animal>(getRootUrl(), defaultAnimal)
+        val response = restTemplate.postForEntity<Animal>(getRootUrl(), defaultAnimalDto)
         assertEquals(HttpStatus.CREATED, response.statusCode)
         assertNotNull(response.body)
         assertEquals(defaultAnimalId, response.body?.id)
@@ -153,7 +154,7 @@ class AnimalControllerTest @Autowired constructor(
 
     @Test
     fun `should find animals by specie`(){
-        animalRepository.saveAll(animals)
+        animalRepository.saveAll(animalDtos)
         val urlParams = HashMap<String, String>()
         urlParams["specie"] = "Chat"
         val response = restTemplate.getForEntity(
@@ -168,7 +169,7 @@ class AnimalControllerTest @Autowired constructor(
 
     @Test
     fun `should not find animals by unknow specie`(){
-        animalRepository.save(animals[2])
+        animalRepository.save(animalDtos[2])
         val urlParams = HashMap<String, String>()
         urlParams["specie"] = "UNKNOW"
         val response = restTemplate.getForEntity(

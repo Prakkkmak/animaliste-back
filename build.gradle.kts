@@ -23,7 +23,12 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
+    implementation("org.springframework.security:spring-security-core:5.1.5.RELEASE")
+    implementation("org.springframework.security:spring-security-web:5.1.5.RELEASE")
+    implementation("org.springframework.security:spring-security-config:5.1.5.RELEASE")
+    implementation("com.auth0:java-jwt:3.12.1")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("io.mockk:mockk:1.9.3")
     dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.4.20")
 }
 

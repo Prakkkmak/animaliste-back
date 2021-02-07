@@ -22,6 +22,7 @@ import java.util.ArrayList
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.algorithms.Algorithm.HMAC512
+import com.auth0.jwt.exceptions.TokenExpiredException
 import com.progreizh.animaliste.security.SecurityConstants.Companion.SECRET
 
 
@@ -38,9 +39,15 @@ class JwtAuthorizationFilter(authenticationManager: AuthenticationManager) : Bas
             chain.doFilter(req, response)
             return
         }
-        val authentication: UsernamePasswordAuthenticationToken = getAuthentication(req)
-        SecurityContextHolder.getContext().authentication = authentication
-        chain.doFilter(req, response)
+        try{
+            val authentication: UsernamePasswordAuthenticationToken = getAuthentication(req)
+            SecurityContextHolder.getContext().authentication = authentication
+        }
+        catch(e: TokenExpiredException){
+            print("Token has expired");
+        } finally {
+            chain.doFilter(req, response)
+        }
     }
 
     // Reads the JWT from the Authorization header, and then uses JWT to validate the token

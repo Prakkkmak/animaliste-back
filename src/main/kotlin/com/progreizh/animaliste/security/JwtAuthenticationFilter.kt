@@ -34,9 +34,6 @@ class JwtAuthenticationFilter(authenticationManager: AuthenticationManager) : Us
         setFilterProcessesUrl(LOGIN_URL)
     }
 
-    @Autowired
-    private lateinit var jwtTokenService: JwtTokenService
-
     @Throws(IOException::class)
     override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {
         try {
@@ -63,7 +60,8 @@ class JwtAuthenticationFilter(authenticationManager: AuthenticationManager) : Us
         chain: FilterChain,
         auth: Authentication
     ) {
-        val body = jwtTokenService.generateToken(auth)
+        val service = JwtTokenService() //TODO Autowired ici
+        val body = service.generateToken(auth)
         res.writer.write(body)
         res.writer.flush()
     }

@@ -2,29 +2,13 @@ package com.progreizh.animaliste.controllers
 
 import com.progreizh.animaliste.entities.Animal
 import com.progreizh.animaliste.repositories.AnimalRepository
-import com.progreizh.animaliste.services.JwtTokenService
-import com.progreizh.animaliste.services.SequenceGenearatorService
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.boot.test.web.client.postForEntity
-import org.springframework.boot.web.server.LocalServerPort
-import org.springframework.http.HttpStatus
-import org.springframework.security.test.context.support.WithMockUser
-import org.springframework.test.context.TestPropertySource
-import org.springframework.test.context.junit.jupiter.SpringExtension
-import java.util.*
-import org.apache.coyote.http11.Constants.a
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
-import org.springframework.web.client.RestTemplate
+import org.springframework.http.HttpStatus
 
 
 class AnimalControllerTest @Autowired constructor(

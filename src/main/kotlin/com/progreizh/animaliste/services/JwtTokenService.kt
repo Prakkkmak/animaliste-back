@@ -17,15 +17,15 @@ import java.util.*
 class JwtTokenService {
     fun generateToken(auth: Authentication): String {
         val algorithm: Algorithm = Algorithm.HMAC512(SecurityConstants.SECRET)
+        val subject : String = if(auth.principal is User) (auth.principal as User).username else auth.principal as String
         val token: String = JWT.create()
-            .withSubject((auth.principal as User).username)
+            .withSubject(subject)
             .withExpiresAt(Date(System.currentTimeMillis() + EXPIRATION_TIME))
             .sign(algorithm)
         return "$TOKEN_PREFIX$token"
     }
     fun generateToken(mail: String, password: String): String {
         val auth : Authentication = UsernamePasswordAuthenticationToken(mail,password)
-        auth.isAuthenticated = true
         return generateToken(auth)
     }
 }

@@ -13,21 +13,15 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.boot.web.server.LocalServerPort
+import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ExtendWith(SpringExtension::class)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@TestPropertySource(properties = ["spring.data.mongodb.database=animaliste_test"])
 class SpecieControllerTest @Autowired constructor(
     private val animalRepository: AnimalRepository,
-    private val restTemplate: TestRestTemplate
-) {
+) : ControllerTest(){
 
-    @LocalServerPort
-    protected var port: Int = 0
 
     private val animalDto1: Animal = Animal(
         ObjectId.get().toHexString(),
@@ -49,7 +43,7 @@ class SpecieControllerTest @Autowired constructor(
         false
     )
 
-    private fun getRootUrl(): String = "http://localhost:$port/species"
+    override fun getRootUrl(): String = "http://localhost:$port/species"
 
     private fun saveAnimals(){
         animalRepository.save(animalDto1)
@@ -65,10 +59,7 @@ class SpecieControllerTest @Autowired constructor(
 
     @Test
     fun `should return all species`() {
-        val response = restTemplate.getForEntity(
-            getRootUrl(),
-            Set::class.java
-        )
+        val response = rest(HttpMethod.GET, Set::class.java)
         assertEquals(HttpStatus.OK, response.statusCode)
         assertNotNull(response.body)
         assertTrue(response.body!!.contains("Chat"))

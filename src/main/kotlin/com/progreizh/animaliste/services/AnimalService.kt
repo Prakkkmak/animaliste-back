@@ -2,8 +2,11 @@ package com.progreizh.animaliste.services
 
 import com.progreizh.animaliste.converters.AnimalConverter
 import com.progreizh.animaliste.dtos.AnimalDto
+import com.progreizh.animaliste.exceptions.ResourceNotFoundException
 import com.progreizh.animaliste.repositories.AnimalRepository
+import org.springframework.boot.context.config.ConfigDataResourceNotFoundException
 import org.springframework.stereotype.Service
+import org.springframework.web.client.HttpClientErrorException
 import java.lang.RuntimeException
 
 @Service
@@ -35,7 +38,7 @@ class AnimalService(private val animalRepository: AnimalRepository, val converte
     fun findById(id : String) : AnimalDto {
         val animalOptional =  animalRepository.findById(id)
         if (!animalOptional.isPresent)
-            throw RuntimeException()
+            throw ResourceNotFoundException()
         else
             return converter.convertToDto(animalOptional.get())
     }

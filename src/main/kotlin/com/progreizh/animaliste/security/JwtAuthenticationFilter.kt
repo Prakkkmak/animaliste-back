@@ -21,13 +21,14 @@ import com.progreizh.animaliste.security.SecurityConstants.Companion.EXPIRATION_
 import com.progreizh.animaliste.security.SecurityConstants.Companion.LOGIN_URL
 import com.progreizh.animaliste.security.SecurityConstants.Companion.SECRET
 import com.progreizh.animaliste.security.SecurityConstants.Companion.TOKEN_PREFIX
+import com.progreizh.animaliste.services.JwtTokenService
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.BadCredentialsException
 
 // https://www.freecodecamp.org/news/how-to-setup-jwt-authorization-and-authentication-in-spring/
 
 class JwtAuthenticationFilter(authenticationManager: AuthenticationManager) : UsernamePasswordAuthenticationFilter() {
-
     init {
         this.authenticationManager = authenticationManager
         setFilterProcessesUrl(LOGIN_URL)
@@ -59,12 +60,8 @@ class JwtAuthenticationFilter(authenticationManager: AuthenticationManager) : Us
         chain: FilterChain,
         auth: Authentication
     ) {
-        val algorithm : Algorithm = HMAC512(SECRET)
-        val token: String = JWT.create()
-            .withSubject((auth.principal as User).username)
-            .withExpiresAt(Date(System.currentTimeMillis() + EXPIRATION_TIME))
-            .sign(algorithm)
-        val body = "$TOKEN_PREFIX$token"
+        val service = JwtTokenService() //TODO Autowired ici
+        val body = service.generateToken(auth)
         res.writer.write(body)
         res.writer.flush()
     }

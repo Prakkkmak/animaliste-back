@@ -4,6 +4,7 @@ import com.progreizh.animaliste.converters.UserConverter
 import com.progreizh.animaliste.dtos.UserCredentialsDto
 import com.progreizh.animaliste.dtos.UserDto
 import com.progreizh.animaliste.entities.User
+import com.progreizh.animaliste.exceptions.ResourceNotFoundException
 import com.progreizh.animaliste.repositories.UserRepository
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -37,7 +38,7 @@ class UserService(val repository: UserRepository, val converter: UserConverter) 
     fun findById(id: String): UserDto {
         val userOptional = repository.findById(id)
         if (!userOptional.isPresent)
-            throw RuntimeException()
+            throw ResourceNotFoundException()
         else
            return converter.convertToDto(userOptional.get())
     }

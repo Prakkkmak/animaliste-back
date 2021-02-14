@@ -1,10 +1,8 @@
 package com.progreizh.animaliste.controllers
 
-import com.progreizh.animaliste.dtos.PictureStorageDto
+import com.progreizh.animaliste.dtos.PictureDto
 import com.progreizh.animaliste.services.PictureStorageService
 import org.springframework.core.io.Resource
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -15,9 +13,8 @@ class PictureController(private val pictureStorageService: PictureStorageService
      */
     @PostMapping("/{category}")
     fun uploadImage(@PathVariable("category") category: String,
-                    @RequestBody pictureStorageDto: PictureStorageDto) : ResponseEntity<PictureStorageDto> {
-        val newPicture = pictureStorageService.store(category, pictureStorageDto)
-        return ResponseEntity(newPicture, HttpStatus.CREATED)
+                    @RequestBody picture: PictureDto) : PictureDto {
+        return pictureStorageService.save(category, picture)
     }
 
     /**
@@ -25,8 +22,7 @@ class PictureController(private val pictureStorageService: PictureStorageService
      */
     @GetMapping("/{category}/{name}")
     fun getPicturePath(@PathVariable("category") category: String, @PathVariable("name") name: String)
-    : ResponseEntity<Resource>{
-        val picturePath = pictureStorageService.load(category, name)
-        return ResponseEntity(picturePath, HttpStatus.OK)
+    : Resource{
+        return pictureStorageService.load(category, name)
     }
 }

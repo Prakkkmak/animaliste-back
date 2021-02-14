@@ -1,6 +1,6 @@
 package com.progreizh.animaliste.services
 
-import com.progreizh.animaliste.dtos.PictureStorageDto
+import com.progreizh.animaliste.dtos.PictureDto
 import com.progreizh.animaliste.exceptions.ResourceNotFoundException
 import org.springframework.core.io.Resource
 import org.springframework.core.io.UrlResource
@@ -14,13 +14,14 @@ class PictureStorageService {
     /**
      * Enregistre une image dans un répertoire 'category'
      */
-    fun store(category: String, pictureStorageDto: PictureStorageDto) : PictureStorageDto{
+    fun save(category: String, picture: PictureDto) : PictureDto{
         val categoryPath : Path = Paths.get(category)
-        val pictureNamePath : Path = Paths.get(pictureStorageDto::name.get())
+        val pictureNamePath : Path = Paths.get(picture.name)
         if(!Files.exists(categoryPath)) Files.createDirectory(categoryPath)
         if(!Files.exists(pictureNamePath)) Files.createDirectory(pictureNamePath)
-        Files.copy(pictureStorageDto::file.get().inputStream, pictureNamePath)
-        return pictureStorageDto
+        val picturePath : Path = Paths.get(picture.name + "/1.png")
+        Files.copy(picture.file.inputStream, picturePath)
+        return picture
     }
 
     /**
